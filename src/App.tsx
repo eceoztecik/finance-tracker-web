@@ -1,11 +1,12 @@
-import { useAppSelector } from "./store/hooks";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 import TransactionForm from "./components/TransactionForm";
+import { deleteTransaction } from "./features/transactions/transactionSlice";
 
 function App() {
   const { items, totalIncome, totalExpense } = useAppSelector(
     (state) => state.transactions
   );
-
+  const dispatch = useAppDispatch();
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 to-blue-500 p-8">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-6">
@@ -37,12 +38,15 @@ function App() {
         <div>
           <h2 className="text-xl font-bold mb-4">İşlemler ({items.length})</h2>
           {items.map((item) => (
-            <div key={item.id} className="bg-gray-50 p-4 rounded mb-2">
-              <div className="flex justify-between">
-                <div>
-                  <p className="font-semibold">{item.category}</p>
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                </div>
+            <div
+              key={item.id}
+              className="bg-gray-50 p-4 rounded mb-2 flex justify-between items-center"
+            >
+              <div>
+                <p className="font-semibold">{item.category}</p>
+                <p className="text-sm text-gray-600">{item.description}</p>
+              </div>
+              <div className="flex items-center gap-4">
                 <p
                   className={`font-bold ${
                     item.type === "income" ? "text-green-600" : "text-red-600"
@@ -51,6 +55,12 @@ function App() {
                   {item.type === "income" ? "+" : "-"}
                   {item.amount} ₺
                 </p>
+                <button
+                  onClick={() => dispatch(deleteTransaction(item.id))}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm"
+                >
+                  Sil
+                </button>
               </div>
             </div>
           ))}
